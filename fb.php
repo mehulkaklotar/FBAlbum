@@ -118,7 +118,7 @@ function create_zip($files = array(),$albumid, $destination = '', $overwrite = f
 
 // Initialize facebook sdk
 require_once ("lib/facebook.php");
-require_once ("fbAppData.php");
+require_once ("fbCredentials.php");
 $config = array();
 $config['appId'] = $fbAppId;
 $config['secret'] = $fbAppSecret;
