@@ -1,101 +1,106 @@
 <?php
-/*
- * Copyright 2011 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-require_once 'lib/google-api-php-client/src/Google_Client.php';
-require_once 'lib/google-api-php-client/src/contrib/Google_PlusService.php';
+require_once 'Zend/Loader.php';
+Zend_Loader::loadClass('Zend_Gdata_Photos');
+Zend_Loader::loadClass('Zend_Gdata_ClientLogin');
+Zend_Loader::loadClass('Zend_Gdata_AuthSub');
 
 session_start();
 
-$client = new Google_Client();
-$client->setApplicationName("Google+ PHP Starter Application");
-// Visit https://code.google.com/apis/console to generate your
-// oauth2_client_id, oauth2_client_secret, and to register your oauth2_redirect_uri.
-// $client->setClientId('insert_your_oauth2_client_id');
-// $client->setClientSecret('insert_your_oauth2_client_secret');
-// $client->setRedirectUri('insert_your_oauth2_redirect_uri');
-// $client->setDeveloperKey('insert_your_developer_key');
-$plus = new Google_PlusService($client);
-
-if (isset($_REQUEST['logout'])) {
-  unset($_SESSION['access_token']);
+function getAuthSubHttpClient()
+{
+    if (!isset($_SESSION['sessionToken']) && !isset($_GET['token']) ){
+        echo '<a href="' . getAuthSubUrl() . '">Login!</a>';
+        exit;
+    } else if (!isset($_SESSION['sessionToken']) && isset($_GET['token'])) {
+        $_SESSION['sessionToken'] =
+            Zend_Gdata_AuthSub::getAuthSubSessionToken($_GET['token']);
+    }
+    $client = Zend_Gdata_AuthSub::getHttpClient($_SESSION['sessionToken']);
+    return $client;
 }
 
-if (isset($_GET['code'])) {
-  $client->authenticate($_GET['code']);
-  $_SESSION['access_token'] = $client->getAccessToken();
-  header('Location: http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF']);
-}
+// update the second argument to be CompanyName-ProductName-Version
+$gp = new Zend_Gdata_Photos(getAuthSubHttpClient(), "FBAlbum-Movers-1.0");
 
-if (isset($_SESSION['access_token'])) {
-  $client->setAccessToken($_SESSION['access_token']);
-}
+// In version 1.5+, you can enable a debug logging mode to see the
+// underlying HTTP requests being made, as long as you're not using
+// a proxy server
+// $gp->enableRequestDebugLogging('/tmp/gp_requests.log');
 
-if ($client->getAccessToken()) {
-  $me = $plus->people->get('me');
 
-  // These fields are currently filtered through the PHP sanitize filters.
-  // See http://www.php.net/manual/en/filter.filters.sanitize.php
-  $url = filter_var($me['url'], FILTER_VALIDATE_URL);
-  $img = filter_var($me['image']['url'], FILTER_VALIDATE_URL);
-  $name = filter_var($me['displayName'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
-  $personMarkup = "<a rel='me' href='$url'>$name</a><div><img src='$img'></div>";
 
-  $optParams = array('maxResults' => 100);
-  $activities = $plus->activities->listActivities('me', 'public', $optParams);
-  $activityMarkup = '';
-  foreach($activities['items'] as $activity) {
-    // These fields are currently filtered through the PHP sanitize filters.
-    // See http://www.php.net/manual/en/filter.filters.sanitize.php
-    $url = filter_var($activity['url'], FILTER_VALIDATE_URL);
-    $title = filter_var($activity['title'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
-    $content = filter_var($activity['object']['content'], FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_HIGH);
-    $activityMarkup .= "<div class='activity'><a href='$url'>$title</a><div>$content</div></div>";
-  }
+$entry = new Zend_Gdata_Photos_AlbumEntry();
+$entry->setTitle($gp->newTitle("Helooooo"));
+$entry->setSummary($gp->newSummary("This is an album."));
 
-  // The access token may have been updated lazily.
-  $_SESSION['access_token'] = $client->getAccessToken();
-} else {
-  $authUrl = $client->createAuthUrl();
+$createdEntry = $gp->insertAlbumEntry($entry);
+
+
+
+
+$username = "mehul.kaklotar";
+$filename = "laanz.png";
+$photoName = "My Test Photo";
+$photoCaption = "The first photo I uploaded to Picasa Web Albums via PHP.";
+$photoTags = "beach, sunshine";
+
+// We use the albumId of 'default' to indicate that we'd like to upload
+// this photo into the 'drop box'.  This drop box album is automatically 
+// created if it does not already exist.
+$albumId = "default";
+
+$fd = $gp->newMediaFileSource($filename);
+$fd->setContentType("image/jpeg");
+
+// Create a PhotoEntry
+$photoEntry = $gp->newPhotoEntry();
+
+$photoEntry->setMediaSource($fd);
+$photoEntry->setTitle($gp->newTitle($photoName));
+$photoEntry->setSummary($gp->newSummary($photoCaption));
+
+// add some tags
+$keywords = new Zend_Gdata_Media_Extension_MediaKeywords();
+$keywords->setText($photoTags);
+$photoEntry->mediaGroup = new Zend_Gdata_Media_Extension_MediaGroup();
+$photoEntry->mediaGroup->keywords = $keywords;
+
+// We use the AlbumQuery class to generate the URL for the album
+$albumQuery = $gp->newAlbumQuery();
+
+$albumQuery->setUser($username);
+$albumQuery->setAlbumId($albumId);
+
+// We insert the photo, and the server returns the entry representing
+// that photo after it is uploaded
+$insertedEntry = $gp->insertPhotoEntry($photoEntry, $albumQuery->getQueryUrl()); 
+
+
+
+
+$serviceName = Zend_Gdata_Photos::AUTH_SERVICE_NAME;
+$client = Zend_Gdata_ClientLogin::getHttpClient("mehul.kaklotar", "gj5gk2579", $serviceName);
+
+// update the second argument to be CompanyName-ProductName-Version
+$gp = new Zend_Gdata_Photos($client, "FBAlbum-Movers-1.0");
+
+try {
+    $userFeed = $gp->getUserFeed("default");
+    foreach ($userFeed as $userEntry) {
+        echo $userEntry->title->text . "<br />\n";
+    }
+} catch (Zend_Gdata_App_HttpException $e) {
+    echo "Error: " . $e->getMessage() . "<br />\n";
+    if ($e->getResponse() != null) {
+        echo "Body: <br />\n" . $e->getResponse()->getBody() . 
+             "<br />\n"; 
+    }
+    // In new versions of Zend Framework, you also have the option
+    // to print out the request that was made.  As the request
+    // includes Auth credentials, it's not advised to print out
+    // this data unless doing debugging
+    // echo "Request: <br />\n" . $e->getRequest() . "<br />\n";
+} catch (Zend_Gdata_App_Exception $e) {
+    echo "Error: " . $e->getMessage() . "<br />\n"; 
 }
 ?>
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <link rel='stylesheet' href='style.css' />
-</head>
-<body>
-<header><h1>Google+ Sample App</h1></header>
-<div class="box">
-
-<?php if(isset($personMarkup)): ?>
-<div class="me"><?php print $personMarkup ?></div>
-<?php endif ?>
-
-<?php if(isset($activityMarkup)): ?>
-<div class="activities">Your Activities: <?php print $activityMarkup ?></div>
-<?php endif ?>
-
-<?php
-  if(isset($authUrl)) {
-    print "<a class='login' href='$authUrl'>Connect Me!</a>";
-  } else {
-   print "<a class='logout' href='?logout'>Logout</a>";
-  }
-?>
-</div>
-</body>
-</html>
