@@ -22,7 +22,7 @@ $(document).ready(function() {
 		});
 		downloadAllAlbums(albumidsselect);
 	});
-	
+
 	// Move all selected albums
 	$('#move_album_select').click(function(event) {
 		event.preventDefault();
@@ -75,12 +75,6 @@ $("#fblogin").click(function() {
 				$('#ProfilePic').attr('src', 'http://graph.facebook.com/' + respo.id + '/picture?width=500&height=500');
 				//Get All ablums of user
 				FB.api('/me/albums', showAlbums);
-			});
-			
-			//Get User Cover
-			FB.api('/me?fields=cover',function(respo){
-				alert(respo);
-				$('#bodyBg').attr('background',respo.cover);
 			});
 
 		} else {
@@ -144,7 +138,7 @@ function showAlbums(response) {
 		event.preventDefault();
 		downloadAllAlbums(albumids);
 	});
-	
+
 	//Move all albums
 	$('#move_album_all').click(function(event) {
 		event.preventDefault();
@@ -182,12 +176,12 @@ function downloadAlbum(albumId) {
  * To start move images to google picasa
  */
 function moveAlbum(albumId) {
-	$("#movelink").hide();
-	$("#moveprogress").show();
-	$("#movealbumModel").click();
+	$("#downloadlink").hide();
+	$("#downloadprogress").show();
+	$("#openmodel").click();
 	//location.href = "fb.php?albumid=" + albumId +"&move=true";
 	$.ajax({
-		url : 'fb.php?albumid=' + albumId +'&move=true',
+		url : 'fb.php?albumid=' + albumId + '&move=true',
 		type : 'get',
 		success : function(data) {
 			//progress bar close
@@ -206,12 +200,12 @@ function moveAlbum(albumId) {
  * To start move images to google picasa
  */
 function moveAllAlbums(albumIds) {
-	$("#movelink").hide();
-	$("#moveprogress").show();
-	$("#movealbumModel").click();
+	$("#downloadlink").hide();
+	$("#downloadprogress").show();
+	$("#openmodel").click();
 	//location.href = "fb.php?albumids=" + albumIds +"&move=true";
 	$.ajax({
-		url : 'fb.php?albumids=' + albumIds +'&move=true',
+		url : 'fb.php?albumids=' + albumIds + '&move=true',
 		type : 'get',
 		success : function(data) {
 			//progress bar close

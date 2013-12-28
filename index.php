@@ -48,11 +48,6 @@ session_start();
 			//Get All ablums of user
 			FB.api('/me/albums', showAlbums);
 		});
-		//Get User Cover
-		FB.api('/me?fields=cover',function(respo){
-			
-			$('#bodyBg').attr('style','background-image:url('+respo.cover.source+');');
-		});
 	} else if (response.status === 'not_authorized') {
 		// the user is logged in to Facebook,
 		// but has not authenticated your app
@@ -232,30 +227,6 @@ session_start();
 				</button>
 				<!--Download Button -->
 				<a href="" id="hrefDownload" class="btn btn-primary" onclick="$('#modelclose').click();">Click Here to Download</a>
-				<div></div>
-			</div>
-		</div>
-		<!--Model window for Move to picasa -->
-		<a href="#myModal" role="button" id="movealbumModel" class="btn" data-toggle="modal" style="display:none"> </a>
-		<div class="modal" id="movealbumModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display:none" >
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-					×
-				</button>
-				<h4 id="myModalLabel">Please wait while we are preparing your files</h4>
-			</div>
-			<div class="modal-body">
-				<!-- Progress bar    -->
-				<div class="progress progress-striped active" id="moveprogress">
-					<div class="bar" style="width: 100%;"></div>
-				</div>
-			</div>
-			<div class="modal-footer" id="movelink" style="display:none">
-				<button class="btn" data-dismiss="modal" aria-hidden="true" id='modelclose'>
-					Close
-				</button>
-				<!--Download Button -->
-				<a href="" id="moveHref" class="btn btn-primary" onclick="$('#modelclose').click();">Login to Google</a>
 				<div></div>
 			</div>
 		</div>
