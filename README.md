@@ -13,7 +13,7 @@ Facebook Album Download and Move to Google/Picasa is a web applicaiton where use
     Move all albums to Picasa
     Move selected albums to Picasa
 
-Live Demo available <a href='http://fbalbumrtcamp-hachiassignment.rhcloud.com/'>HERE</a>
+Live Demo available <a href='http://fbalbumrtcamp-hachiassignment.rhcloud.com/'>HERE</a><br/>
 Technologies and Libraries used
 
     foundation-5.0.2 : for templating and responsive media 
