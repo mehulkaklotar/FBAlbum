@@ -1,7 +1,7 @@
 FBAlbum
 =======
 
-Facebook - Album Slideshow, Download Album and Move to Picasa/Google+
+Facebook - Album Slideshow, Download Album and Move to Picasa/Google+.<br/>
 Facebook Album Download and Move to Google/Picasa is a web applicaiton where user is authenticated with his facebook and google credentials using OAuth 2.0 and following functionalities are given:
 
     Fetch all the albums from the FB account
