@@ -16,11 +16,11 @@ Facebook Album Download and Move to Google/Picasa is a web applicaiton where use
 Live Demo available <a href='http://fbalbumrtcamp-hachiassignment.rhcloud.com/'>HERE</a><br/><br/>
 <b>Technologies and Libraries used</b>
 
-    <b>foundation-5.0.2 :</b> for templating and responsive media 
-    <b>bootstrap :</b> for showing modal window for process
-    <b>supersized.3.2.7 :</b> for photo gallery for albums
-    <b>Zend :</b> for moving the albums to Picasa through Auth
-    <b>API :</b> Facebook API, Google OAuth 2.0
-    <b>Backend :</b> PHP.
-    <b>Frontend :</b> jQuery, HTML5, CSS3.
+    foundation-5.0.2 : for templating and responsive media 
+    bootstrap : for showing modal window for process
+    supersized.3.2.7 : for photo gallery for albums
+    Zend : for moving the albums to Picasa through Auth
+    API : Facebook API, Google OAuth 2.0
+    Backend : PHP.
+    Frontend : jQuery, HTML5, CSS3.
 
