@@ -95,7 +95,7 @@ function zipDir($dir, $zip, $relative_path = DIRECTORY_SEPARATOR) {
  * @param type $destination : destination path to store that zip
  * @param type $overwrite  : Booleand flag to overwrite file or not
  */
-function create_zip($files = array(),$albumid, $destination = '', $overwrite = false) {
+function create_zip($files = array(), $albumid, $destination = '', $overwrite = false) {
 	//if the zip file already exists and overwrite is false, return false
 	//$albumid = $_GET["albumid"];
 	if (file_exists($albumid)) {
@@ -116,12 +116,38 @@ function create_zip($files = array(),$albumid, $destination = '', $overwrite = f
 	rrmdir($albumid);
 }
 
+/**
+ *
+ * @param type $files :  files array (photos)
+ * @param type $albumid :  URL of files to zip
+ * @param type $destination : destination path to store that zip
+ * @param type $overwrite  : Booleand flag to overwrite file or not
+ */
+function prepare_move($files = array(), $albumid, $destination = '', $overwrite = false) {
+	//if the zip file already exists and overwrite is false, return false
+	//$albumid = $_GET["albumid"];
+	if (file_exists($albumid)) {
+		rrmdir($albumid);
+	}
+
+	mkdir($albumid);
+
+	//if files were passed in...
+	if (is_array($files)) {
+		//cycle through each file
+		foreach ($files as $file) {
+			//make sure the file exists
+			getfile($file, $albumid);
+		}
+	}
+}
+
 // Initialize facebook sdk
 require_once ("lib/facebook.php");
 require_once ("fbCredentials.php");
 $config = array();
-$config['appId'] = $fbAppId;
-$config['secret'] = $fbAppSecret;
+$config['appId'] = "737631022923182";
+$config['secret'] = "6c533a4b735995f6889d4700b575e0ad";
 $config['fileUpload'] = false;
 // optional
 $facebook = new Facebook($config);
@@ -141,44 +167,71 @@ if (isset($_GET["albumid"])) {
 		$files_to_zip[] = $photos["source"];
 	}
 	$albumid = $_GET["albumid"];
-	//if true, good; if false, zip creation failed
-	create_zip($files_to_zip,$albumid,'');
-	// set example variables
-	$file = $albumid . ".zip";
-	$reponse["status"] = 1;
-	echo json_encode($reponse);
 
-} else if (isset($_GET['albumids'])) {
-	//create user folder for albums to store
-	$uid = $facebook->getUser();
-	if (file_exists($uid)) {
-		rrmdir($uid);
-	}
-
-	mkdir($uid);
-	
-	//Fetch user albums and get photos from it\
-	$albumids =  explode(",", $_GET['albumids']);
-	print_r ($albumids);
-	foreach ($albumids as $album) {
-		//Fetch User albums Photo
-		$albumPhotos = $facebook -> api('/' . $album . '/photos', 'GET');
-		$files_to_zip = array();
-		foreach ($albumPhotos["data"] as $photos) {
-			$files_to_zip[] = $photos["source"];
-		}
-		$albumid = $album;
+	if (isset($_GET['move'])) {
+		prepare_move($files_to_zip, $albumid);
+		// set example variables
+		$reponse["status"] = 1;
+		echo json_encode($reponse);
+	} else {
 		//if true, good; if false, zip creation failed
-		create_zip($files_to_zip,$uid.'/'.$albumid);
-		
+		create_zip($files_to_zip, $albumid, '');
 		// set example variables
 		$file = $albumid . ".zip";
-
+		$reponse["status"] = 1;
+		echo json_encode($reponse);
 	}
-	createZipFromDir($uid, $uid . ".zip");
-	rrmdir($uid);
-	$reponse["status"] = 1;
-	echo json_encode($reponse);
+
+} else if (isset($_GET['albumids'])) {
+
+	if (isset($_GET['move'])) {//Fetch user albums and get photos from it\
+		$albumids = explode(",", $_GET['albumids']);
+		foreach ($albumids as $album) {
+			//Fetch User albums Photo
+			$albumPhotos = $facebook -> api('/' . $album . '/photos', 'GET');
+			$files_to_zip = array();
+			foreach ($albumPhotos["data"] as $photos) {
+				$files_to_zip[] = $photos["source"];
+			}
+			$albumid = $album;
+			prepare_move($files_to_zip, $albumid);
+			// set example variables
+			$reponse["status"] = 1;
+			echo json_encode($reponse);
+		}
+
+	} else {
+		//create user folder for albums to store
+		$uid = $facebook -> getUser();
+		if (file_exists($uid)) {
+			rrmdir($uid);
+		}
+
+		mkdir($uid);
+
+		//Fetch user albums and get photos from it\
+		$albumids = explode(",", $_GET['albumids']);
+		foreach ($albumids as $album) {
+			//Fetch User albums Photo
+			$albumPhotos = $facebook -> api('/' . $album . '/photos', 'GET');
+			$files_to_zip = array();
+			foreach ($albumPhotos["data"] as $photos) {
+				$files_to_zip[] = $photos["source"];
+			}
+			$albumid = $album;
+			//if true, good; if false, zip creation failed
+			create_zip($files_to_zip, $uid . '/' . $albumid);
+
+			// set example variables
+			$file = $albumid . ".zip";
+
+		}
+		createZipFromDir($uid, $uid . ".zip");
+		rrmdir($uid);
+		$reponse["status"] = 1;
+		echo json_encode($reponse);
+	}
+
 }
 
 // http headers for zip downloads

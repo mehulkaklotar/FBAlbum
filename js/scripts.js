@@ -1,10 +1,14 @@
-var albumids = new Array(); // to store all albums IDs
-var albumidsselect = new Array(); // to store all selected albums IDs
+var albumids = new Array();
+// to store all albums IDs
+var albumidsselect = new Array();
+// to store all selected albums IDs
+
+var fbAuthResp;
 
 $(document).ready(function() {
 	$('#supersized-loader').hide();
 	$('#supersized').hide();
-	
+
 	// Download all selected albums
 	$('#download_album_select').click(function(event) {
 		event.preventDefault();
@@ -18,45 +22,36 @@ $(document).ready(function() {
 		});
 		downloadAllAlbums(albumidsselect);
 	});
+	
+	// Move all selected albums
+	$('#move_album_select').click(function(event) {
+		event.preventDefault();
+		//Album ids to array for download
+		var i = 0;
+		$('.checkboxSelect:checked').each(function() {
+
+			albumidsselect[i] = $(this).val();
+			i++;
+
+		});
+		moveAllAlbums(albumidsselect);
+	});
+
+	//Logout
+	$('#logout').click(function() {
+		FB.logout(function(response) {
+			// user is now logged out
+			window.location.reload();
+			$("#fblogin").show();
+			$('#supersized-loader').hide();
+		});
+	});
 
 });
 
-var fbAuthResp;
-window.fbAsyncInit = function() {
-	FB.init({
-		appId : appId,
-		// App ID
-		status : true,
-		// check login status
-		cookie : true,
-		// enable cookies to allow the server to access the session
-		xfbml : true // parse XFBML
-	});
-
-	// Additional initialization code here
-	FB.Event.subscribe('auth.login', function(response) {
-		window.location.reload();
-	});
-	FB.Event.subscribe('auth.logout', function(response) {
-		window.location.reload();
-	});
-};
-
-// Load the SDK Asynchronously
-(function(d) {
-		var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
-		if (d.getElementById(id)) {
-			return;
-		}
-		js = d.createElement('script');
-		js.id = id;
-		js.async = true;
-		js.src = "//connect.facebook.net/en_US/all.js";
-		ref.parentNode.insertBefore(js, ref);
-	}(document));
-
 //Authanticate User with app
 $("#fblogin").click(function() {
+
 	$('#supersized-loader').show();
 	FB.login(function(response) {
 		if (response.authResponse) {
@@ -81,6 +76,12 @@ $("#fblogin").click(function() {
 				//Get All ablums of user
 				FB.api('/me/albums', showAlbums);
 			});
+			
+			//Get User Cover
+			FB.api('/me?fields=cover',function(respo){
+				alert(respo);
+				$('#bodyBg').attr('background',respo.cover);
+			});
 
 		} else {
 			//User close auth window
@@ -94,7 +95,7 @@ $("#fblogin").click(function() {
 });
 
 /**
- * Process response of /me/albums and display it 
+ * Process response of /me/albums and display it
  */
 function showAlbums(response) {
 	$('#galleryLoading').hide();
@@ -106,7 +107,7 @@ function showAlbums(response) {
 		albumids[key] = value.id;
 
 		//create html structure
-		var strHtml = '' + '<div id="album_' + key + '" class="large-4 small-6 columns"> ' + '<a href="#" class="album_link_' + key + '"><img height="1000" width="1000" class="imgcover" id="album_cover_' + key + '" /></a>' + '<img id="loading_' + key + '" src="../img/ajax-loader.gif" /><div class="panel"><input class="checkboxSelect" id="checkbox_' + key + '" type="checkbox" value="' + value.id + '"><a for="checkbox_' + key + '" href="#" class="album_link_' + key + '"><h5>' + value.name + '</h5></a><label class="subheader">' + value.count + ' photos</label><ul class="button-group"><li><a title="Download" id="download_album_' + key + '" class="button success tiny step fi-download size-36"></a></li><li><a title="Move" id="move_album_' + key + '" class="button success tiny">Move</a></li></ul>' + '</div></div>';
+		var strHtml = '' + '<div id="album_' + key + '" class="large-4 small-6 columns"> ' + '<a href="#" class="album_link_' + key + '"><img height="1000" width="1000" class="imgcover" id="album_cover_' + key + '" /></a>' + '<img id="loading_' + key + '" src="../img/ajax-loader.gif" /><div class="panel"><input class="checkboxSelect" id="checkbox_' + key + '" type="checkbox" value="' + value.id + '"><a for="checkbox_' + key + '" href="#" class="album_link_' + key + '"><h5>' + value.name + '</h5></a><label class="subheader">' + value.count + ' photos</label><ul class="button-group"><li><a title="Download" id="download_album_' + key + '" class="button success tiny step fi-download size-36"></a></li><li><a title="Move to Picasa" id="move_album_' + key + '" class="button success tiny">Move</a></li></ul>' + '</div></div>';
 
 		$('#albums').append(strHtml);
 		FB.api('/' + value.cover_photo + '', function(response) {
@@ -117,13 +118,13 @@ function showAlbums(response) {
 				$('#album_cover_' + key).attr("src", response.picture);
 			}
 		});
-		
+
 		//Show albums photos in gallery
 		$('.album_link_' + key).click(function(event) {
 			event.preventDefault();
 			show_albums_photos(value.id);
 		});
-		
+
 		//Download album & zip creation
 		$('#download_album_' + key).click(function(event) {
 			event.preventDefault();
@@ -141,9 +142,13 @@ function showAlbums(response) {
 	//Download all albums & zip creation
 	$('#download_album_all').click(function(event) {
 		event.preventDefault();
-
 		downloadAllAlbums(albumids);
-
+	});
+	
+	//Move all albums
+	$('#move_album_all').click(function(event) {
+		event.preventDefault();
+		moveAllAlbums(albumids);
 	});
 
 }
@@ -174,28 +179,51 @@ function downloadAlbum(albumId) {
 }
 
 /**
- * To start move all images to google picasa
+ * To start move images to google picasa
  */
 function moveAlbum(albumId) {
-	$("#downloadlink").hide();
-	$("#downloadprogress").show();
-	$("#openmodel").click();
-	location.href = "picasamove.php?albumid=" + albumId;
-	/*$.ajax({
-	 url : 'picasamove.php?albumid=' + albumId,
-	 type : 'get',
-	 success : function(data) {
-	 //show download button
-	 $("#downloadprogress").hide();
-	 $("#downloadlink").show();
-	 $("#hrefDownload").attr('href', albumId + '.zip');
-	 },
-	 error : function(data) {
-	 //Handle error
-	 $('#modelclose').click();
-	 alert('Error Occure on server,Please Try again')
-	 }
-	 });*/
+	$("#movelink").hide();
+	$("#moveprogress").show();
+	$("#movealbumModel").click();
+	//location.href = "fb.php?albumid=" + albumId +"&move=true";
+	$.ajax({
+		url : 'fb.php?albumid=' + albumId +'&move=true',
+		type : 'get',
+		success : function(data) {
+			//progress bar close
+			$('#modelclose').click();
+			location.href = "picasamove.php?albumid=" + albumId;
+		},
+		error : function(data) {
+			//Handle error
+			$('#modelclose').click();
+			alert('Error Occure on server,Please Try again')
+		}
+	});
+}
+
+/**
+ * To start move images to google picasa
+ */
+function moveAllAlbums(albumIds) {
+	$("#movelink").hide();
+	$("#moveprogress").show();
+	$("#movealbumModel").click();
+	//location.href = "fb.php?albumids=" + albumIds +"&move=true";
+	$.ajax({
+		url : 'fb.php?albumids=' + albumIds +'&move=true',
+		type : 'get',
+		success : function(data) {
+			//progress bar close
+			$('#modelclose').click();
+			location.href = "picasamove.php?albumids=" + albumIds;
+		},
+		error : function(data) {
+			//Handle error
+			$('#modelclose').click();
+			alert('Error Occure on server,Please Try again')
+		}
+	});
 }
 
 /**
@@ -286,4 +314,9 @@ $("#backtoalbum").click(function() {
 //Download Button in  Slideshow
 $("#btnDownload").click(function() {
 	downloadAlbum(lastAlbumId);
+});
+
+//Move Button in  Slideshow
+$("#btnMove").click(function() {
+	moveAlbum(lastAlbumId);
 });

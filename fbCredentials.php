@@ -1,4 +1,4 @@
-<?php 
+<?php
 //Set Facebook App id and App Secret
 //Create our Application instance (replace this with your appId and secret).
  $AppId='737631022923182';

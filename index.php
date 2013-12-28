@@ -1,7 +1,7 @@
 <?php
+require_once ("fbCredentials.php");
 ob_start();
 session_start();
-require_once ("fbCredentials.php");
 ?>
 <!DOCTYPE html>
 <html>
@@ -10,12 +10,81 @@ require_once ("fbCredentials.php");
 		<title></title>
 		<link href="css/bootstrap.min.css" rel="stylesheet">
 		<link href="css/styles.css" rel="stylesheet">
-		<link rel="stylesheet" href="css/forkit.css">
 		<link rel="stylesheet" href="css/foundation.css" />
 		<link rel="stylesheet" href="css/foundation-icons.css" />
 		<script src="js/modernizr.js"></script>
+		<!-- Load External js Lib-->
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
 	</head>
-	<body>
+	<body id="bodyBg">
+		<div id="fb-root"></div>
+<script>
+  window.fbAsyncInit = function() {
+    // init the FB JS SDK
+    FB.init({
+      appId      : '737631022923182',                        // App ID from the app dashboard
+      status     : true,                                 // Check Facebook Login status
+      xfbml      : true                                  // Look for social plugins on the page
+    });
+		$('#supersized-loader').show();
+		$("#fblogin").hide();
+    // Additional initialization code such as adding Event Listeners goes here
+    FB.getLoginStatus(function(response) {
+	if (response.status === 'connected') {
+		// the user is logged in and has authenticated your
+		// app, and response.authResponse supplies
+		// the user's ID, a valid access token, a signed
+		// request, and the time the access token
+		// and signed request each expire
+		
+		var uid = response.authResponse.userID;
+		var accessToken = response.authResponse.accessToken;
+		//Get User Name
+		FB.api('/me?fields=name', function(respo) {
+			$("#UserName").html(respo.name);
+			$("#title").html(respo.name + "'s Albums");
+			$("#fblogin").hide();
+			$('#ProfilePic').attr('src', 'http://graph.facebook.com/' + respo.id + '/picture?width=500&height=500');
+			//Get All ablums of user
+			FB.api('/me/albums', showAlbums);
+		});
+		//Get User Cover
+		FB.api('/me?fields=cover',function(respo){
+			
+			$('#bodyBg').attr('style','background-image:url('+respo.cover.source+');');
+		});
+	} else if (response.status === 'not_authorized') {
+		// the user is logged in to Facebook,
+		// but has not authenticated your app
+		$("#fblogin").show();
+			$('#supersized-loader').hide();
+	} else {
+		// the user isn't logged in to Facebook.
+		$("#fblogin").show();
+			$('#supersized-loader').hide();
+	}
+});
+  };
+
+  // Load the SDK asynchronously
+  (function(){
+     // If we've already installed the SDK, we're done
+     if (document.getElementById('facebook-jssdk')) {return;}
+
+     // Get the first script element, which we'll use to find the parent node
+     var firstScriptElement = document.getElementsByTagName('script')[0];
+
+     // Create a new script element and set its id
+     var facebookJS = document.createElement('script'); 
+     facebookJS.id = 'facebook-jssdk';
+
+     // Set the new script's source to the source of the Facebook JS SDK
+     facebookJS.src = '//connect.facebook.net/en_US/all.js';
+
+     // Insert the Facebook JS SDK into the DOM
+     firstScriptElement.parentNode.insertBefore(facebookJS, firstScriptElement);
+   }());
+</script>
 		<div class="row">
 			<div class="large-12 columns">
 
@@ -39,6 +108,7 @@ require_once ("fbCredentials.php");
 				<!-- End Navigation -->
 
 				<div class="row" style="margin-top: 50px;">
+
 					<!--SuprizedMe full screen slider -->
 					<div id="slider" style="display:none">
 						<div id="backalbum">
@@ -47,6 +117,9 @@ require_once ("fbCredentials.php");
 							</button>
 							<button id="btnDownload" style="margin-top:-50px" class="button success small">
 								Download Album
+							</button>
+							<button id="btnMove" style="margin-top:-50px" class="button success small">
+								Move Album
 							</button>
 						</div>
 						<!--Thumbnail Navigation-->
@@ -99,7 +172,20 @@ require_once ("fbCredentials.php");
 
 						<div class="hide-for-small panel">
 							<h3 id="UserName">Header</h3>
-
+							
+							<button id="download_album_all" class="button small" style="width:100%">
+							Download all
+						</button><br>
+						<button id="download_album_select" class="button small" style="width:100%">
+							Download selected
+						</button><br>
+						<button id="move_album_all" class="button small success" style="width:100%">
+							Move all
+						</button><br>
+						<button id="move_album_select" class="button small success" style="width:100%">
+							Move selected
+						</button><br>
+						<button class="button alert tiny" id="logout" style="width:100%">Logout</button>
 						</div>
 					</div>
 
@@ -113,12 +199,7 @@ require_once ("fbCredentials.php");
 						</div>
 
 						<!-- End Thumbnails -->
-						<button id="download_album_all" class="button small">
-							Download all
-						</button>
-						<button id="download_album_select" class="button small">
-							Download selected
-						</button>
+						
 					</div>
 					<center>
 						<button class="button large" id='fblogin'>
@@ -137,10 +218,10 @@ require_once ("fbCredentials.php");
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
 					×
 				</button>
-				<h4 id="myModalLabel">Preparing your files to be download</h4>
+				<h4 id="myModalLabel">Please wait while we are preparing your files</h4>
 			</div>
 			<div class="modal-body">
-				<!--                 Progress bar    -->
+				<!-- Progress bar    -->
 				<div class="progress progress-striped active" id="downloadprogress">
 					<div class="bar" style="width: 100%;"></div>
 				</div>
@@ -154,13 +235,37 @@ require_once ("fbCredentials.php");
 				<div></div>
 			</div>
 		</div>
-		<!-- Load External js Lib-->
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
-
-		<script src="js/bootstrap.min.js"></script>
-		<div id="fb-root"></div>
-		<script>var appId =  '<?php echo $AppId; ?>';
+		<!--Model window for Move to picasa -->
+		<a href="#myModal" role="button" id="movealbumModel" class="btn" data-toggle="modal" style="display:none"> </a>
+		<div class="modal" id="movealbumModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display:none" >
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					×
+				</button>
+				<h4 id="myModalLabel">Please wait while we are preparing your files</h4>
+			</div>
+			<div class="modal-body">
+				<!-- Progress bar    -->
+				<div class="progress progress-striped active" id="moveprogress">
+					<div class="bar" style="width: 100%;"></div>
+				</div>
+			</div>
+			<div class="modal-footer" id="movelink" style="display:none">
+				<button class="btn" data-dismiss="modal" aria-hidden="true" id='modelclose'>
+					Close
+				</button>
+				<!--Download Button -->
+				<a href="" id="moveHref" class="btn btn-primary" onclick="$('#modelclose').click();">Login to Google</a>
+				<div></div>
+			</div>
+		</div>
+	</body>
+	<script src="js/bootstrap.min.js"></script>
+		
+		<script>var appId = '<?php echo $AppId; ?>';
+			
 		</script>
+		
 		<script src="js/foundation.min.js"></script>
 		<script>
 			$(document).foundation();
@@ -172,5 +277,4 @@ require_once ("fbCredentials.php");
 		<script type="text/javascript" src="theme/supersized.shutter.min.js"></script>
 		<script src="js/scripts.js"></script>
 
-	</body>
 </html>
