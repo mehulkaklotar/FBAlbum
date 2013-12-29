@@ -244,10 +244,10 @@ session_start();
 			$(document).foundation();
 		</script>
 		<link rel="stylesheet" href="css/supersized.css" type="text/css" media="screen" />
-		<link rel="stylesheet" href="theme/supersized.shutter.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="css/supersized.shutter.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="js/jquery.easing.min.js"></script>
 		<script type="text/javascript" src="js/supersized.3.2.7.min.js"></script>
-		<script type="text/javascript" src="theme/supersized.shutter.min.js"></script>
+		<script type="text/javascript" src="js/supersized.shutter.min.js"></script>
 		<script src="js/scripts.js"></script>
 
 </html>
