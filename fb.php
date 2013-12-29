@@ -146,8 +146,8 @@ function prepare_move($files = array(), $albumid, $destination = '', $overwrite 
 require_once ("lib/facebook.php");
 require_once ("fbCredentials.php");
 $config = array();
-$config['appId'] = "737631022923182";
-$config['secret'] = "6c533a4b735995f6889d4700b575e0ad";
+$config['appId'] = $AppId;
+$config['secret'] = $AppSecret;
 $config['fileUpload'] = false;
 // optional
 $facebook = new Facebook($config);

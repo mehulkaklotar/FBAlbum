@@ -22,7 +22,7 @@ session_start();
   window.fbAsyncInit = function() {
     // init the FB JS SDK
     FB.init({
-      appId      : '737631022923182',                        // App ID from the app dashboard
+      appId      : '<?php echo $AppId; ?>',                        // App ID from the app dashboard
       status     : true,                                 // Check Facebook Login status
       xfbml      : true                                  // Look for social plugins on the page
     });
@@ -44,6 +44,7 @@ session_start();
 			$("#UserName").html(respo.name);
 			$("#title").html(respo.name + "'s Albums");
 			$("#fblogin").hide();
+			$("#fbicon").hide();
 			$('#ProfilePic').attr('src', 'http://graph.facebook.com/' + respo.id + '/picture?width=500&height=500');
 			//Get All ablums of user
 			FB.api('/me/albums', showAlbums);
@@ -197,9 +198,10 @@ session_start();
 						
 					</div>
 					<center>
-						<button class="button large" id='fblogin'>
-							Login with Facebook
-						</button>
+						<img src="img/facebook-icon.png" id="fbicon" /><br>
+						<input type="button" style="background: url('img/fb-login.png') no-repeat;width:260px;height:41px;" id="fblogin" />
+							
+						
 					</center>
 				</div>
 			</div>

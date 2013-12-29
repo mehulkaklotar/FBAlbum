@@ -1,7 +1,8 @@
-var albumids = new Array();
 // to store all albums IDs
-var albumidsselect = new Array();
+var albumids = new Array();
+
 // to store all selected albums IDs
+var albumidsselect = new Array();
 
 var fbAuthResp;
 
@@ -43,6 +44,7 @@ $(document).ready(function() {
 			// user is now logged out
 			window.location.reload();
 			$("#fblogin").show();
+			$("#fbicon").show();
 			$('#supersized-loader').hide();
 		});
 	});
@@ -72,6 +74,7 @@ $("#fblogin").click(function() {
 				$("#UserName").html(respo.name);
 				$("#title").html(respo.name + "'s Albums");
 				$("#fblogin").hide();
+				$("#fbicon").hide();
 				$('#ProfilePic').attr('src', 'http://graph.facebook.com/' + respo.id + '/picture?width=500&height=500');
 				//Get All ablums of user
 				FB.api('/me/albums', showAlbums);
@@ -101,7 +104,7 @@ function showAlbums(response) {
 		albumids[key] = value.id;
 
 		//create html structure
-		var strHtml = '' + '<div id="album_' + key + '" class="large-4 small-6 columns"> ' + '<a href="#" class="album_link_' + key + '"><img height="1000" width="1000" class="imgcover" id="album_cover_' + key + '" /></a>' + '<img id="loading_' + key + '" src="../img/ajax-loader.gif" /><div class="panel"><input class="checkboxSelect" id="checkbox_' + key + '" type="checkbox" value="' + value.id + '"><a for="checkbox_' + key + '" href="#" class="album_link_' + key + '"><h5>' + value.name + '</h5></a><label class="subheader">' + value.count + ' photos</label><ul class="button-group"><li><a title="Download" id="download_album_' + key + '" class="button success tiny step fi-download size-36"></a></li><li><a title="Move to Picasa" id="move_album_' + key + '" class="button success tiny">Move</a></li></ul>' + '</div></div>';
+		var strHtml = '' + '<div id="album_' + key + '" class="large-4 small-6 columns"> ' + '<a href="#" class="album_link_' + key + '"><img style="height:200px;width:200px;" class="imgcover" id="album_cover_' + key + '" /></a>' + '<img id="loading_' + key + '" src="../img/ajax-loader.gif" /><div class="panel"><input class="checkboxSelect" id="checkbox_' + key + '" type="checkbox" value="' + value.id + '"><a for="checkbox_' + key + '" href="#" class="album_link_' + key + '"><h5>' + value.name + '</h5></a><label class="subheader">' + value.count + ' photos</label><ul class="button-group"><li><a title="Download" id="download_album_' + key + '" class="button success tiny step fi-download size-36"></a></li><li><a title="Move to Picasa" id="move_album_' + key + '" class="button success tiny">Move</a></li></ul>' + '</div></div>';
 
 		$('#albums').append(strHtml);
 		FB.api('/' + value.cover_photo + '', function(response) {

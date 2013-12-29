@@ -38,17 +38,7 @@
 					<center>
 
 						<?php
-						// Initialize facebook sdk
-						/**
-						 * @see Facebook Client Library
-						 */
-						require_once ("lib/facebook.php");
-
-						/**
-						 * @see Facebook AppID, AppSecret
-						 */
-						require_once ("fbCredentials.php");
-
+						
 						/**
 						 * @see Zend_Loader
 						 */
@@ -111,70 +101,7 @@
 							}
 						}
 
-						/**
-						 *
-						 * @param type $files :  files array (photos)
-						 * @param type $albumid :  URL of files to zip
-						 * @param type $destination : destination path to store that zip
-						 * @param type $overwrite  : Booleand flag to overwrite file or not
-						 */
-						function prepare_move($files = array(), $albumid, $destination = '', $overwrite = false) {
-							//if the zip file already exists and overwrite is false, return false
-							//$albumid = $_GET["albumid"];
-							if (file_exists($albumid)) {
-								rrmdir($albumid);
-							}
-
-							mkdir($albumid);
-
-							//if files were passed in...
-							if (is_array($files)) {
-								//cycle through each file
-								foreach ($files as $file) {
-									//make sure the file exists
-									getfile($file, $albumid);
-								}
-							}
-						}
-
-						/**
-						 *
-						 * Facebook Configuration and load sdk
-						 */
-						function fb_Initialize() {
-							$config = array();
-							$config['appId'] = "737631022923182";
-							$config['secret'] = "6c533a4b735995f6889d4700b575e0ad";
-							$config['fileUpload'] = false;
-
-							if ($facebook -> getUser() == 0) {
-								$reponse["status"] = 0;
-								echo json_encode($reponse);
-							}
-							// optional
-							$facebook = new Facebook($config);
-							$facebook -> setAccessToken($_SESSION["accesstoken"]);
-						}
-
-						/**
-						 *
-						 * Facebook Album Creation on server file explorer
-						 */
-						function fb_makeAlbumDirectory() {
-							if (isset($_GET["albumid"])) {
-								//Fetch User albums Photo
-								$albumPhotos = $facebook -> api('/' . $_GET["albumid"] . '/photos', 'GET');
-
-								$files_to_zip = array();
-								foreach ($albumPhotos["data"] as $photos) {
-									$files_to_zip[] = $photos["source"];
-								}
-								$albumid = $_GET["albumid"];
-
-								prepare_move($files_to_zip, $albumid);
-							}
-						}
-
+						
 						/**
 						 * Returns the full URL of the current page, based upon env variables
 						 *
@@ -241,7 +168,7 @@
 						function requestUserLogin($linkText) {
 							$authSubUrl = getAuthSubUrl();
 
-							echo "<a class='button alert' href=\"{$authSubUrl}\">{$linkText}</a>";
+							echo "<a href=\"{$authSubUrl}\"><img src='img/google-signin.png' />{$linkText}</a>";
 						}
 
 						/**
@@ -304,7 +231,8 @@
 						function processPageLoad() {
 							global $_SESSION, $_GET;
 							if (!isset($_SESSION['sessionToken']) && !isset($_GET['token'])) {
-								requestUserLogin('Please login to your Google Account.');
+								print "<img src='img/Google-icon.png' /><br/>";
+								requestUserLogin('');
 							} else {
 								$client = getAuthSubHttpClient();
 								//fb_Initialize();
