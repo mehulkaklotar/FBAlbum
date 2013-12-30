@@ -19,12 +19,12 @@ Facebook - Album Slideshow, Download Album and Move to Picasa/Google+.<br/>
 <li><h4>Live Demo:&nbsp;<a href='http://fbalbumrtcamp-hachiassignment.rhcloud.com/'>FBAlbum</a></h4></li>
 <li><h4>Technologies and Libraries used:</h4>
 <ul>
-<li>foundation-5.0.2 : for templating and responsive media </li>
-<li>supersized.3.2.7 : for photo gallery for albums</li>
-<li>Zend : for moving the albums to Picasa through Auth</li>
-<li>API : Facebook API, Google OAuth 2.0
-<li>Backend : PHP</li>
-<li>Frontend : jQuery, HTML5, CSS3</li>
+<li><b>foundation-5.0.2 :</b> for templating and responsive media </li>
+<li><b>supersized.3.2.7 :</b> for photo gallery for albums</li>
+<li><b>Zend :</b> for moving the albums to Picasa through Auth</li>
+<li><b>API :</b> Facebook API, Google OAuth 2.0
+<li><b>Backend :</b> PHP</li>
+<li><b>Frontend :</b> jQuery, HTML5, CSS3</li>
 </ul>
 </li>
 </ul>
