@@ -156,7 +156,7 @@ function showAlbums(response) {
 function downloadAlbum(albumId) {
 	$("#downloadlink").hide();
 	$("#downloadprogress").show();
-	$("#openmodel").click();
+	$('#openmodal').click();
 	//location.href="fb.php?albumid="+ albumId;
 	$.ajax({
 		url : 'fb.php?albumid=' + albumId,
@@ -181,19 +181,15 @@ function downloadAlbum(albumId) {
 function moveAlbum(albumId) {
 	$("#downloadlink").hide();
 	$("#downloadprogress").show();
-	$("#openmodel").click();
+	$('#openmodal').click();
 	//location.href = "fb.php?albumid=" + albumId +"&move=true";
 	$.ajax({
 		url : 'fb.php?albumid=' + albumId + '&move=true',
 		type : 'get',
 		success : function(data) {
-			//progress bar close
-			$('#modelclose').click();
 			location.href = "picasamove.php?albumid=" + albumId;
 		},
 		error : function(data) {
-			//Handle error
-			$('#modelclose').click();
 			alert('Error Occure on server,Please Try again')
 		}
 	});
@@ -205,19 +201,16 @@ function moveAlbum(albumId) {
 function moveAllAlbums(albumIds) {
 	$("#downloadlink").hide();
 	$("#downloadprogress").show();
-	$("#openmodel").click();
+	$('#openmodal').click();
 	//location.href = "fb.php?albumids=" + albumIds +"&move=true";
 	$.ajax({
 		url : 'fb.php?albumids=' + albumIds + '&move=true',
 		type : 'get',
 		success : function(data) {
-			//progress bar close
-			$('#modelclose').click();
 			location.href = "picasamove.php?albumids=" + albumIds;
 		},
 		error : function(data) {
 			//Handle error
-			$('#modelclose').click();
 			alert('Error Occure on server,Please Try again')
 		}
 	});
@@ -230,7 +223,7 @@ function downloadAllAlbums(albumIds) {
 	var uid;
 	$("#downloadlink").hide();
 	$("#downloadprogress").show();
-	$("#openmodel").click();
+	$('#openmodal').click();
 	//location.href="fb.php?albumids="+ albumIds;
 	$.ajax({
 		url : 'fb.php?albumids=' + albumIds,
