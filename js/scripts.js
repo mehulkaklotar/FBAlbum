@@ -169,7 +169,6 @@ function downloadAlbum(albumId) {
 		},
 		error : function(data) {
 			//Handle error
-			$('#modelclose').click();
 			alert('Error Occure on server,Please Try again')
 		}
 	});
@@ -240,7 +239,6 @@ function downloadAllAlbums(albumIds) {
 		},
 		error : function(data) {
 			//Handle error
-			$('#modelclose').click();
 			alert('Error Occure on server,Please Try again')
 		}
 	});
