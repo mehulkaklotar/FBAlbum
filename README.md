@@ -2,7 +2,10 @@ FBAlbum
 =======
 
 Facebook - Album Slideshow, Download Album and Move to Picasa/Google+.<br/>
-Facebook Album Download and Move to Google/Picasa is a web applicaiton where user is authenticated with his facebook and google credentials using OAuth 2.0 and following functionalities are given:
+<ul>
+<li><h4>Owner: &nbsp; <a href='https://github.com/mehulkaklotar'>@mehulkaklotar</a></h4></li>
+<li><h4>Description: &nbsp;</h4> Facebook Album Download and Move to Google/Picasa is a web applicaiton where user is authenticated with his facebook and google credentials using OAuth 2.0.</li>
+<li><h4>Functionalities: &nbsp;</h4>
 <ul>
 <li>Fetch all the albums from the FB account</li>
 <li>View all album photos </li>
@@ -13,8 +16,8 @@ Facebook Album Download and Move to Google/Picasa is a web applicaiton where use
 <li>Move all albums to Picasa</li>
 <li>Move selected albums to Picasa</li>
 </ul>
-Live Demo available <a href='http://fbalbumrtcamp-hachiassignment.rhcloud.com/'>HERE</a><br/><br/>
-<b>Technologies and Libraries used</b>
+<li><h4>Live Demo:&nbsp;<a href='http://fbalbumrtcamp-hachiassignment.rhcloud.com/'>FBAlbum</a></h4></li>
+<li><h4>Technologies and Libraries used:</h4>
 <ul>
 <li>foundation-5.0.2 : for templating and responsive media </li>
 <li>supersized.3.2.7 : for photo gallery for albums</li>
@@ -23,3 +26,6 @@ Live Demo available <a href='http://fbalbumrtcamp-hachiassignment.rhcloud.com/'>
 <li>Backend : PHP</li>
 <li>Frontend : jQuery, HTML5, CSS3</li>
 </ul>
+</li>
+</ul>
+
