@@ -1,5 +1,6 @@
 <?php
 require_once ("fbCredentials.php");
+//Facebook AppID, AppSecret
 ob_start();
 session_start();
 ?>
@@ -8,99 +9,100 @@ session_start();
 	<head>
 		<meta charset="utf-8">
 		<title>FBAlbum</title>
+		<!-- CSS files -->
 		<link href="css/styles.css" rel="stylesheet">
 		<link rel="stylesheet" href="css/foundation.css" />
 		<link rel="stylesheet" href="css/foundation-icons.css" />
-		<script src="js/modernizr.js"></script>
 		<!-- Load External js Lib-->
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+		<script src="js/modernizr.js"></script>
 	</head>
 	<body id="bodyBg">
 		<div id="fb-root"></div>
 		<script>
-	window.fbAsyncInit = function() {
-		// init the FB JS SDK
-		FB.init({
-		appId      : '<?php echo $AppId; ?>',                        // App ID from the app dashboard
-		status     : true,                                 // Check Facebook Login status
-		xfbml      : true                                  // Look for social plugins on the page
+			window.fbAsyncInit = function() {
+// init the FB JS SDK
+FB.init({
+appId      : '<?php echo $AppId; ?>
+	',                        // App ID from the app dashboard
+	status     : true,                                 // Check Facebook Login status
+	xfbml      : true                                  // Look for social plugins on the page
 	});
 	$('#supersized-loader').show();
 	$("#fblogin").hide();
 	// Additional initialization code such as adding Event Listeners goes here
 	FB.getLoginStatus(function(response) {
-		if (response.status === 'connected') {
-			// the user is logged in and has authenticated your
-			// app, and response.authResponse supplies
-			// the user's ID, a valid access token, a signed
-			// request, and the time the access token
-			// and signed request each expire
-	
-			var uid = response.authResponse.userID;
-			var accessToken = response.authResponse.accessToken;
-			//Get User Name
-			FB.api('/me?fields=name', function(respo) {
-				$("#UserName").html(respo.name);
-				$("#title").html(respo.name + "'s Albums");
-				$("#fblogin").hide();
-				$("#fbicon").hide();
-				$('#ProfilePic').attr('src', 'http://graph.facebook.com/' + respo.id + '/picture?width=500&height=500');
-				//Get All ablums of user
-				FB.api('/me/albums', showAlbums);
-			});
-		} else if (response.status === 'not_authorized') {
-			// the user is logged in to Facebook,
-			// but has not authenticated your app
-			$("#fblogin").show();
-			$('#supersized-loader').hide();
-		} else {
-			// the user isn't logged in to Facebook.
-			$("#fblogin").show();
-			$('#supersized-loader').hide();
-		}
+	if (response.status === 'connected') {
+	// the user is logged in and has authenticated your
+	// app, and response.authResponse supplies
+	// the user's ID, a valid access token, a signed
+	// request, and the time the access token
+	// and signed request each expire
+
+	var uid = response.authResponse.userID;
+	var accessToken = response.authResponse.accessToken;
+	//Get User Name
+	FB.api('/me?fields=name', function(respo) {
+	$("#UserName").html(respo.name);
+	$("#title").html(respo.name + "'s Albums");
+	$("#fblogin").hide();
+	$("#fbicon").hide();
+	$('#ProfilePic').attr('src', 'http://graph.facebook.com/' + respo.id + '/picture?width=500&height=500');
+	//Get All ablums of user
+	FB.api('/me/albums', showAlbums);
 	});
-};
+	} else if (response.status === 'not_authorized') {
+	// the user is logged in to Facebook,
+	// but has not authenticated your app
+	$("#fblogin").show();
+	$('#supersized-loader').hide();
+	} else {
+	// the user isn't logged in to Facebook.
+	$("#fblogin").show();
+	$('#supersized-loader').hide();
+	}
+	});
+	};
 
 	// Load the SDK asynchronously
 	(function(){
-		// If we've already installed the SDK, we're done
-		if (document.getElementById('facebook-jssdk')) {return;}
-	
-		// Get the first script element, which we'll use to find the parent node
-		var firstScriptElement = document.getElementsByTagName('script')[0];
-	
-		// Create a new script element and set its id
-		var facebookJS = document.createElement('script');
-		facebookJS.id = 'facebook-jssdk';
-	
-		// Set the new script's source to the source of the Facebook JS SDK
-		facebookJS.src = '//connect.facebook.net/en_US/all.js';
-	
-		// Insert the Facebook JS SDK into the DOM
-		firstScriptElement.parentNode.insertBefore(facebookJS, firstScriptElement);
+	// If we've already installed the SDK, we're done
+	if (document.getElementById('facebook-jssdk')) {return;}
+
+	// Get the first script element, which we'll use to find the parent node
+	var firstScriptElement = document.getElementsByTagName('script')[0];
+
+	// Create a new script element and set its id
+	var facebookJS = document.createElement('script');
+	facebookJS.id = 'facebook-jssdk';
+
+	// Set the new script's source to the source of the Facebook JS SDK
+	facebookJS.src = '//connect.facebook.net/en_US/all.js';
+
+	// Insert the Facebook JS SDK into the DOM
+	firstScriptElement.parentNode.insertBefore(facebookJS, firstScriptElement);
 	}());
 		</script>
+		<!-- Navigation -->
+
 		<div class="row">
 			<div class="large-12 columns">
 
-				<!-- Navigation -->
+				<nav class="top-bar" data-topbar>
+					<ul class="title-area">
+						<!-- Title Area -->
+						<li class="name">
+							<h1><a href="#"> Facebook Album </a></h1>
+						</li>
+					</ul>
+				</nav>
+				<!-- End Top Bar -->
+			</div>
+		</div>
 
-				<div class="row">
-					<div class="large-12 columns">
-
-						<nav class="top-bar" data-topbar>
-							<ul class="title-area">
-								<!-- Title Area -->
-								<li class="name">
-									<h1><a href="#"> Facebook Album </a></h1>
-								</li>
-							</ul>
-						</nav>
-						<!-- End Top Bar -->
-					</div>
-				</div>
-
-				<!-- End Navigation -->
+		<!-- End Navigation -->
+		<div class="row">
+			<div class="large-12 columns">
 
 				<div class="row" style="margin-top: 50px;">
 
@@ -233,8 +235,10 @@ session_start();
 		</div>
 
 	</body>
-
-	<script>var appId =  '<?php echo $AppId; ?>';</script>
+	<!-- JS files -->
+	<script>var appId =   '<?php echo $AppId; ?>
+		';
+	</script>
 	<script src="js/foundation.min.js"></script>
 	<script>
 		$(document).foundation();

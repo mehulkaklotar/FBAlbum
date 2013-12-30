@@ -3,35 +3,35 @@
 	<head>
 		<meta charset="utf-8">
 		<title>FBAlbum</title>
+		<!-- CSS files -->
 		<link href="css/styles.css" rel="stylesheet">
 		<link rel="stylesheet" href="css/foundation.css" />
 		<link rel="stylesheet" href="css/foundation-icons.css" />
-		<script src="js/modernizr.js"></script>
 		<!-- Load External js Lib-->
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+		<script src="js/modernizr.js"></script>
 	</head>
 	<body>
+		<!-- Navigation -->
+
 		<div class="row">
 			<div class="large-12 columns">
 
-				<!-- Navigation -->
+				<nav class="top-bar" data-topbar>
+					<ul class="title-area">
+						<!-- Title Area -->
+						<li class="name">
+							<h1><a href="#"> Facebook Album </a></h1>
+						</li>
+					</ul>
+				</nav>
+				<!-- End Top Bar -->
+			</div>
+		</div>
 
-				<div class="row">
-					<div class="large-12 columns">
-
-						<nav class="top-bar" data-topbar>
-							<ul class="title-area">
-								<!-- Title Area -->
-								<li class="name">
-									<h1><a href="#"> Facebook Album </a></h1>
-								</li>
-							</ul>
-						</nav>
-						<!-- End Top Bar -->
-					</div>
-				</div>
-
-				<!-- End Navigation -->
+		<!-- End Navigation -->
+		<div class="row">
+			<div class="large-12 columns">
 
 				<div class="row" style="margin-top: 50px;">
 					<center>
@@ -233,30 +233,21 @@
 								requestUserLogin('');
 							} else {
 								$client = getAuthSubHttpClient();
-								//fb_Initialize();
 								if (isset($_GET['albumid'])) {
-									try {
-										//fb_makeAlbumDirectory();
-										createAlbum($client, $_GET['albumid'], $_GET['albumid']);
-										$dir = $_GET['albumid'];
-										movePhotos($client, $dir);
-										header("location:index.php");
-									} catch(Exception $e) {
-										header("location:http://fbalbumrtcamp-hachiassignment.rhcloud.com");
-									}
+									createAlbum($client, $_GET['albumid'], $_GET['albumid']);
+									$dir = $_GET['albumid'];
+									movePhotos($client, $dir);
+									//header("location:http://fbalbumrtcamp-hachiassignment.rhcloud.com");
 								} else if (isset($_GET['albumids'])) {
-									try {
-										$albumids = explode(",", $_GET['albumids']);
-										foreach ($albumids as $album) {
-											createAlbum($client, $album, $album);
-											$dir = $album;
-											movePhotos($client, $dir);
-										}
-										header("location:index.php");
-									} catch(Exception $e) {
-										header("location:http://fbalbumrtcamp-hachiassignment.rhcloud.com");
+									$albumids = explode(",", $_GET['albumids']);
+									foreach ($albumids as $album) {
+										createAlbum($client, $album, $album);
+										$dir = $album;
+										movePhotos($client, $dir);
 									}
+									//
 								}
+								header("location:http://fbalbumrtcamp-hachiassignment.rhcloud.com");
 								//createAlbum($client, "mehul12", "mehul");
 								//addPhotoToAlbum("laanz.png","laanz","laanz","odesk","mehul12");
 							}
@@ -290,7 +281,7 @@
 						 * @param  string $summury The description of the album
 						 */
 						function createAlbum($client, $title, $summury) {
-							$service = new Zend_Gdata_Photos(getAuthSubHttpClient(), "FBAlbum-Movers-1.0");
+							$service = new Zend_Gdata_Photos($client);
 							$entry = new Zend_Gdata_Photos_AlbumEntry();
 							$entry -> setTitle($service -> newTitle($title));
 							$entry -> setSummary($service -> newSummary($summury));
@@ -309,7 +300,7 @@
 						 * @param  string $albumname The name of the album to move into
 						 */
 						function addPhotoToAlbum($client, $file, $photoname, $photocaption, $phototags, $albumName) {
-							$gp = new Zend_Gdata_Photos($client, "FBAlbum-Movers-1.0");
+							$gp = new Zend_Gdata_Photos($client);
 							$username = "default";
 							$filename = $file;
 							$photoName = $photoname;
@@ -367,6 +358,7 @@
 
 		</div>
 	</body>
+	<!-- JS files -->
 	<script src="js/foundation.min.js"></script>
 	<script>
 		$(document).foundation();
