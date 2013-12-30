@@ -17,7 +17,6 @@ Live Demo available <a href='http://fbalbumrtcamp-hachiassignment.rhcloud.com/'>
 <b>Technologies and Libraries used</b>
 <ul>
 <li>foundation-5.0.2 : for templating and responsive media </li>
-<li>bootstrap : for showing modal window for process</li>
 <li>supersized.3.2.7 : for photo gallery for albums</li>
 <li>Zend : for moving the albums to Picasa through Auth</li>
 <li>API : Facebook API, Google OAuth 2.0
